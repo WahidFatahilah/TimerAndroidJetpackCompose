@@ -1,6 +1,5 @@
 package com.pomodoro.pomodoroappsmoa
 
-import android.graphics.Paint.Cap
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,10 +24,14 @@ import androidx.compose.ui.unit.sp
 import com.pomodoro.pomodoroappsmoa.ui.theme.PomodoroAppsMOATheme
 import kotlinx.coroutines.delay
 import android.graphics.Canvas
+import androidx.compose.foundation.Image
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.fontResource
+import androidx.compose.ui.res.painterResource
 
 
 class MainActivity : ComponentActivity() {
@@ -40,7 +43,7 @@ class MainActivity : ComponentActivity() {
             PomodoroAppsMOATheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(),
-                    color = colors.background) {
+                    color = MaterialTheme.colors.background) {
                     CountDownTimer()
                 }
             }
@@ -51,6 +54,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CountDownTimer() {
     var duration by remember { mutableStateOf(10L) }
+    var namaKegiatan by remember { mutableStateOf("") }
     var remainingTime by remember { mutableStateOf(10L) }
     var isRunning by remember { mutableStateOf(false) }
     var showTimerDialog by remember { mutableStateOf(false) }
@@ -63,12 +67,12 @@ fun CountDownTimer() {
             CircularProgressBar(
                 progress = (duration - remainingTime / 1000f) / duration,
                 modifier = Modifier.size(400.dp),
-                strokeWidth = 8.dp,
+                strokeWidth = 35.dp,
             )
-
             Text(
                 text = formatTime(remainingTime),
                 fontSize = 50.sp,
+                color = Color.White,
                 fontWeight = FontWeight.Bold
             )
 
@@ -79,30 +83,55 @@ fun CountDownTimer() {
                 Text(text = "STOP")
             }
         } else {
-            OutlinedTextField(
-                value = duration.toString(),
-                onValueChange = { input ->
-                    duration = if (input.isEmpty()) 0 else input.toLong()
-                    remainingTime = duration * 1000
-                },
-                label = { Text("Duration in seconds") },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = {
-                    isRunning = true
-                    remainingTime = duration * 1000
-                },
-                modifier = Modifier.align(Alignment.BottomCenter)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.SpaceAround,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "START")
+                Image(
+                    painter = painterResource(id = R.drawable.splashscreen),
+                    contentDescription = "gambar splash screen",
+                )
+                OutlinedTextField(
+                    value = duration.toString(),
+                    onValueChange = { input ->
+                        duration = if (input.isEmpty()) 0 else input.toLong()
+                        remainingTime = duration * 1000
+                    },
+                    label = { Text("Duration in seconds") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
+              /*  OutlinedTextField(
+                    value = namaKegiatan,
+                    onValueChange = { input ->
+                        namaKegiatan = if (input.isEmpty()) 0 else input.toLong()
+                    },
+                    label = { Text("Masukkan nama kegiatan") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )*/
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        isRunning = true
+                        remainingTime = duration * 1000
+                    },
+                   /* modifier = Modifier.align(Alignment.BottomCenter)*/
+                ) {
+                    Text(text = "START")
+                }
             }
+
+
         }
     }
 
@@ -122,14 +151,15 @@ private fun formatTime(time: Long): String {
     val milliseconds = time % 1000 / 10
     val seconds = time / 1000 % 60
     val minutes = time / 1000 / 60
-    return "%02d:%02d:%02d".format(minutes, seconds, milliseconds)
+/*    return "%02d:%02d:%02d".format(minutes, seconds, milliseconds)*/
+    return "%02d:%02d".format(minutes, seconds)
 }
 
 @Composable
 fun CircularProgressBar(
     modifier: Modifier = Modifier,
     progress: Float,
-    strokeWidth: Dp = 8.dp,
+    strokeWidth: Dp = 15.dp,
     color: Color = colors.primary,
     backgroundColor: Color = color.copy(alpha = 0.1f)
 ) {
